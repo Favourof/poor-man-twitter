@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<style>
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+
+  body {
+    background: #000;
+    color: #e7e9ea;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    min-height: 100vh;
+  }
+
+  .layout {
+    max-width: 600px;
+    margin: 0 auto;
+    border-left: 0.5px solid #2f3336;
+    border-right: 0.5px solid #2f3336;
+    min-height: 100vh;
+  }
+
+  .header {
+    position: sticky;
+    top: 0;
+    background: rgba(0, 0, 0, 0.85);
+    backdrop-filter: blur(12px);
+    border-bottom: 0.5px solid #2f3336;
+    padding: 16px 20px;
+    z-index: 10;
+  }
+
+  .header h1 {
+    font-size: 20px;
+    font-weight: 700;
+    color: #e7e9ea;
+    letter-spacing: -0.3px;
+  }
+
+  .compose {
+    padding: 16px 20px;
+    border-bottom: 8px solid #16181c;
+    display: flex;
+    gap: 12px;
+  }
+
+  .avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: #1d9bf0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 16px;
+    color: #fff;
+    flex-shrink: 0;
+  }
+
+  .compose-right {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .compose-right input {
+    background: transparent;
+    border: none;
+    outline: none;
+    font-size: 16px;
+    color: #e7e9ea;
+    padding: 4px 0;
+    font-family: inherit;
+  }
+
+  .compose-right input::placeholder {
+    color: #536471;
+  }
+
+  .compose-right textarea {
+    background: transparent;
+    border: none;
+    outline: none;
+    font-size: 18px;
+    color: #e7e9ea;
+    resize: none;
+    min-height: 80px;
+    font-family: inherit;
+    line-height: 1.5;
+  }
+
+  .compose-right textarea::placeholder {
+    color: #536471;
+  }
+
+  .compose-actions {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-top: 8px;
+    border-top: 0.5px solid #2f3336;
+  }
+
+  .char-count {
+    font-size: 13px;
+    color: #536471;
+  }
+
+  .char-count.warning {
+    color: #ffd400;
+  }
+
+  .char-count.danger {
+    color: #f4212e;
+  }
+
+  .tweet-btn {
+    background: #1d9bf0;
+    color: #fff;
+    border: none;
+    border-radius: 9999px;
+    padding: 8px 20px;
+    font-size: 15px;
+    font-weight: 700;
+    cursor: pointer;
+    font-family: inherit;
+    transition: background 0.15s;
+  }
+
+  .tweet-btn:hover {
+    background: #1a8cd8;
+  }
+
+  .tweet-btn:disabled {
+    background: #0f4f78;
+    color: #536471;
+    cursor: not-allowed;
+  }
+
+  .status-bar {
+    padding: 8px 20px;
+    font-size: 13px;
+    color: #1d9bf0;
+    border-bottom: 0.5px solid #2f3336;
+    display: none;
+  }
+
+  .status-bar.visible {
+    display: block;
+  }
+
+  .feed {}
+
+  .tweet-card {
+    padding: 16px 20px;
+    border-bottom: 0.5px solid #2f3336;
+    display: flex;
+    gap: 12px;
+    animation: fadeIn 0.3s ease;
+  }
+
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(-8px);
+    }
+
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .tweet-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 15px;
+    color: #fff;
+    flex-shrink: 0;
+  }
+
+  .tweet-body {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .tweet-meta {
+    display: flex;
+    align-items: baseline;
+    gap: 6px;
+    margin-bottom: 4px;
+  }
+
+  .tweet-author {
+    font-size: 15px;
+    font-weight: 700;
+    color: #e7e9ea;
+  }
+
+  .tweet-time {
+    font-size: 14px;
+    color: #536471;
+  }
+
+  .tweet-content {
+    font-size: 15px;
+    color: #e7e9ea;
+    line-height: 1.5;
+    word-break: break-word;
+  }
+
+  .empty-state {
+    padding: 60px 20px;
+    text-align: center;
+    color: #536471;
+    font-size: 15px;
+  }
+
+  .live-dot {
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #00ba7c;
+    margin-right: 6px;
+    animation: pulse 2s infinite;
+  }
+
+  @keyframes pulse {
+
+    0%,
+    100% {
+      opacity: 1;
+    }
+
+    50% {
+      opacity: 0.4;
+    }
+  }
+</style>
+
+<h2 class="sr-only" style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0)">Poor Man's Twitter
+  — post and view tweets in real time</h2>
+
+<div class="layout">
+  <div class="header">
+    <h1>Home</h1>
+  </div>
+
+  <div class="compose">
+    <div class="avatar" id="compose-avatar">?</div>
+    <div class="compose-right">
+      <input type="text" id="author-input" placeholder="Your name" maxlength="100" />
+      <textarea id="content-input" placeholder="What is happening?!" maxlength="280"></textarea>
+      <div class="compose-actions">
+        <span class="char-count" id="char-count">280</span>
+        <button class="tweet-btn" id="tweet-btn" disabled>Post</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="status-bar" id="status-bar">
+    <span class="live-dot"></span>Connected — new tweets appear instantly
+  </div>
+
+  <div class="feed" id="feed">
+    <div class="empty-state" id="empty-state">Loading tweets...</div>
+  </div>
+</div>
+
+<script>
+  const API = 'http://127.0.0.1:3000/api';
+  const COLORS = ['#1d9bf0', '#00ba7c', '#ff7a00', '#f91880', '#7856ff', '#ff6b6b'];
+
+  function getColor(name) {
+    let hash = 0;
+    for (let c of name) hash = c.charCodeAt(0) + ((hash << 5) - hash);
+    return COLORS[Math.abs(hash) % COLORS.length];
+  }
+
+  function getInitials(name) {
+    return name.trim().split(' ').map(w => w[0]).join('').toUpperCase().slice(0, 2) || '?';
+  }
+
+  function timeAgo(dateStr) {
+    const diff = Math.floor((Date.now() - new Date(dateStr)) / 1000);
+    if (diff < 60) return `${diff}s`;
+    if (diff < 3600) return `${Math.floor(diff / 60)}m`;
+    if (diff < 86400) return `${Math.floor(diff / 3600)}h`;
+    return new Date(dateStr).toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+  }
+
+  function renderTweet(tweet, prepend = false) {
+    const feed = document.getElementById('feed');
+    const empty = document.getElementById('empty-state');
+    if (empty) empty.remove();
+
+    const color = getColor(tweet.author);
+    const initials = getInitials(tweet.author);
+
+    const card = document.createElement('div');
+    card.className = 'tweet-card';
+    card.innerHTML = `
+    <div class="tweet-avatar" style="background:${color}">${initials}</div>
+    <div class="tweet-body">
+      <div class="tweet-meta">
+        <span class="tweet-author">${tweet.author}</span>
+        <span class="tweet-time">· ${timeAgo(tweet.createdAt)}</span>
+      </div>
+      <div class="tweet-content">${tweet.content}</div>
+    </div>
+  `;
+
+    if (prepend && feed.firstChild) {
+      feed.insertBefore(card, feed.firstChild);
+    } else {
+      feed.appendChild(card);
+    }
+  }
+
+  async function loadTweets() {
+    try {
+      const res = await fetch(`${API}/tweets`);
+      const tweets = await res.json();
+      const feed = document.getElementById('feed');
+      feed.innerHTML = '';
+      if (tweets.length === 0) {
+        feed.innerHTML = '<div class="empty-state">No tweets yet. Be the first!</div>';
+      } else {
+        tweets.forEach(t => renderTweet(t));
+      }
+    } catch (e) {
+      document.getElementById('feed').innerHTML = '<div class="empty-state">Could not connect to server.</div>';
+    }
+  }
+
+  function connectSSE() {
+    const es = new EventSource(`${API}/tweets/stream`);
+    es.onopen = () => {
+      document.getElementById('status-bar').classList.add('visible');
+    };
+    es.onmessage = (e) => {
+      const tweet = JSON.parse(e.data);
+      renderTweet(tweet, true);
+    };
+    es.onerror = () => {
+      document.getElementById('status-bar').classList.remove('visible');
+      setTimeout(connectSSE, 3000);
+    };
+  }
+
+  const authorInput = document.getElementById('author-input');
+  const contentInput = document.getElementById('content-input');
+  const tweetBtn = document.getElementById('tweet-btn');
+  const charCount = document.getElementById('char-count');
+  const composeAvatar = document.getElementById('compose-avatar');
+
+  function updateBtn() {
+    const hasAuthor = authorInput.value.trim().length > 0;
+    const hasContent = contentInput.value.trim().length > 0;
+    tweetBtn.disabled = !(hasAuthor && hasContent);
+  }
+
+  authorInput.addEventListener('input', () => {
+    updateBtn();
+    const name = authorInput.value.trim();
+    if (name) {
+      composeAvatar.textContent = getInitials(name);
+      composeAvatar.style.background = getColor(name);
+    } else {
+      composeAvatar.textContent = '?';
+      composeAvatar.style.background = '#536471';
+    }
+  });
+
+  contentInput.addEventListener('input', () => {
+    const remaining = 280 - contentInput.value.length;
+    charCount.textContent = remaining;
+    charCount.className = 'char-count' + (remaining <= 20 ? ' danger' : remaining <= 50 ? ' warning' : '');
+    updateBtn();
+  });
+
+  tweetBtn.addEventListener('click', async () => {
+    const author = authorInput.value.trim();
+    const content = contentInput.value.trim();
+    if (!author || !content) return;
+
+    tweetBtn.disabled = true;
+    tweetBtn.textContent = 'Posting...';
+
+    try {
+      await fetch(`${API}/tweets`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ author, content })
+      });
+      contentInput.value = '';
+      charCount.textContent = '280';
+      charCount.className = 'char-count';
+    } catch (e) {
+      alert('Failed to post tweet. Is the server running?');
+    }
+
+    tweetBtn.textContent = 'Post';
+    updateBtn();
+  });
+
+  loadTweets();
+  connectSSE();
+</script>
