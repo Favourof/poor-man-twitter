@@ -1,5 +1,5 @@
 import "reflect-metadata";
-import dotenv from "dotenv";
+import * as dotenv from "dotenv";
 import { DataSource } from "typeorm";
 import { Tweet } from "../entities/tweet";
 
@@ -13,7 +13,7 @@ export const AppDataSource = new DataSource({
   password: process.env.DB_PASSWORD || "",
   database: process.env.DB_NAME || "",
 
-  synchronize: true,
+  synchronize: process.env.NODE_ENV !== "production",
 
   entities: [Tweet],
   logging: true,
