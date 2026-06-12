@@ -237,3 +237,10 @@ Browser receives event → prepends tweet to feed
 | `DB_USERNAME` | PostgreSQL username | —           |
 | `DB_PASSWORD` | PostgreSQL password | —           |
 | `DB_NAME`     | Database name       | —           |
+
+---
+
+## Live Demo
+
+- **Frontend:** https://favourof.github.io/poor-man-twitter/frontend/poor_mans_twitter_ui.html
+- **API:** https://poor-man-twitter.onrender.com/api/tweets
