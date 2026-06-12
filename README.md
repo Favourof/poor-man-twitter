@@ -157,7 +157,7 @@ A keep-alive ping comment is sent every 30 seconds to prevent connection timeout
 ### 1. Clone the repository
 
 ```bash
-git clone <repo-url>
+git clone https://github.com/Favourof/poor-man-twitter
 cd poor-mans-twitter
 ```
 
