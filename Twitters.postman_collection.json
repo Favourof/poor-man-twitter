@@ -1,0 +1,56 @@
+{
+  "info": {
+    "_postman_id": "4efdefcc-9c1e-4fa2-b855-07bcac4a418e",
+    "name": "Twitters",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "33609178",
+    "_collection_link": "https://go.postman.co/collection/33609178-4efdefcc-9c1e-4fa2-b855-07bcac4a418e?source=collection_link"
+  },
+  "item": [
+    {
+      "name": "create tweet",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n    \"author\": \"favour\",\r\n    \"content\": \"This is a content flow\"\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "http://localhost:3000/api/tweets",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "3000",
+          "path": [
+            "api",
+            "tweets"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Get all tweet",
+      "request": {
+        "method": "GET",
+        "header": []
+      },
+      "response": []
+    },
+    {
+      "name": "create stream",
+      "request": {
+        "method": "GET",
+        "header": []
+      },
+      "response": []
+    }
+  ]
+}
