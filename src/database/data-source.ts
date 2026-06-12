@@ -13,7 +13,7 @@ export const AppDataSource = new DataSource({
   password: process.env.DB_PASSWORD || "",
   database: process.env.DB_NAME || "",
 
-  synchronize: process.env.NODE_ENV !== "production",
+  synchronize: process.env.TYPEORM_SYNC === "true",
 
   entities: [Tweet],
   logging: true,
